@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classification Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #333; /* Dark gray background color */
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            padding: 20px;
+            background-color: #222; /* Darker container background */
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            color: #fff; /* Changed font color inside the container */
+            margin: 0 auto; /* Center the container horizontally */
+        }
+
+        h2, p, h3 {
+            text-align: center; /* Center headings and paragraph text */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0; /* Adjust margin to provide space around the table */
+            text-align: center; /* Center text in the table */
+        }
+
+        th, td {
+            border: 1px solid #444; /* Darker border for the table */
+            padding: 10px;
+            text-align: center; /* Center text in the table cells */
+        }
+
+        th {
+            background-color: #555; /* Slightly lighter background for table headers */
+        }
+
+        tr:nth-child(even) {
+            background-color: #333; /* Alternating row background color */
+        }
+
+        p {
+            margin-bottom: 20px;
+            color: #fff; /* White color for paragraph text */
+        }
+
+        h3 {
+            color: #28a745; /* Green color for percentage heading */
+            margin-bottom: 10px;
+        }
+
+        .back-button {
+            display: inline-block;
+            background-color: #00bfff; /* Blue color for the button */
+            color: #fff;
+            padding: 8px 16px; /* Adjusted padding for a smaller button */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px; /* Smaller font size */
+            width: auto; /* Allow the width to fit the content */
+            max-width: 200px; /* Set a maximum width for the button */
+            margin: 20px auto; /* Center the button horizontally */
+        }
+
+        .back-button:hover {
+            background-color: #007bff; /* Darker blue on hover */
+            border: 2px solid #fff; /* White border on hover */
+        }
+
+        .logo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            transition: transform 0.6s; /* Smooth transition for the flip effect */
+        }
+
+        .logo img {
+            width: 150px;
+            transition: transform 0.6s; /* Smooth transition for the flip effect */
+        }
+
+        .logo:hover img {
+            transform: rotateY(180deg); /* Flip the image on hover */
+        }
+
+        .circle-container {
+            display: flex;
+            flex-direction: column; /* Stack circles vertically */
+            align-items: center;
+            gap: 40px; /* Increased gap between circles */
+            margin-top: 20px; /* Provide space above the circles */
+        }
+
+        .circle {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #555;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Ensures the circle remains within bounds */
+        }
+
+        .circle svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg); /* Rotate to start at 0% at the top */
+        }
+
+        .circle svg circle {
+            fill: none;
+            transition: stroke-dasharray 1s; /* Smooth transition for the filling */
+        }
+
+        .circle .outer {
+            stroke: #444;
+            stroke-width: 10;
+        }
+
+        .circle .inner {
+            stroke: #00bfff;
+            stroke-width: 10;
+            stroke-linecap: round;
+            stroke-dasharray: 0 314; /* Start with empty */
+        }
+
+        .percentage-text {
+            margin-top: 20px; /* Space between circle and text */
+            font-size: 20px;
+            color: #00bfff;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">
+        <img src="{{ url_for('static', filename='images/logo-no-background.png') }}" alt="Website Logo">
+    </div>
+    <div class="container">
+        <h2>Classification Results</h2>
+        <div id="results">
+            <table>
+                <tr>
+                    <th>Question</th>
+                    <th>Category</th>
+                </tr>
+                {% for question, category in results %}
+                <tr>
+                    <td>{{ question }}</td>
+                    <td>{{ category }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <p>Total Questions: {{ total_questions }}</p>
+        <h3>Percentage Accuracy for Each Category</h3>
+        <div class="circle-container">
+            {% for category, percentage in category_percentages.items() %}
+            <div class="circle" data-percentage="{{ percentage }}">
+                <svg>
+                    <circle class="outer" cx="60" cy="60" r="50"></circle>
+                    <circle class="inner" cx="60" cy="60" r="50"></circle>
+                </svg>
+            </div>
+            <div class="percentage-text">{{ percentage }}%</div>
+            {% endfor %}
+        </div>
+        <a href="/" class="back-button">Go Back</a>
+    </div>
+    <script>
+        document.querySelectorAll('.circle').forEach(circle => {
+            const percentage = circle.getAttribute('data-percentage');
+            const radius = 50; // Radius of the circle
+            const circumference = 2 * Math.PI * radius; // Circumference of the circle
+            const dashArray = (percentage / 100) * circumference; // Percentage to fill
+            
+            const innerCircle = circle.querySelector('.inner');
+            innerCircle.style.strokeDasharray = dashArray + ' ' + circumference;
+
+            circle.addEventListener('mousemove', (e) => {
+                const rect = circle.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                const angle = Math.atan2(y, x) + Math.PI; // Angle in radians
+                const percent = (angle / (2 * Math.PI)) * 100; // Convert angle to percentage
+                const fillAmount = (percent / 100) * circumference; // Calculate stroke-dasharray
+                innerCircle.style.strokeDasharray = `${fillAmount} ${circumference}`;
+            });
+
+            circle.addEventListener('mouseleave', () => {
+                innerCircle.style.strokeDasharray = dashArray + ' ' + circumference;
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Exam Question Classification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url("{{ url_for('static', filename='images/bg2.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Hide scrollbar on body */
+        }
+
+        .container {
+            background-color: rgba(68, 68, 68, 0.8); /* Semi-transparent background */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            max-height: 80vh;
+            overflow-y: auto; /* Enable scrolling inside container */
+        }
+
+        .container::-webkit-scrollbar {
+            width: 12px; /* Width of the scrollbar */
+        }
+
+        .container::-webkit-scrollbar-track {
+            background: #555; /* Track color */
+            border-radius: 10px;
+        }
+
+        .container::-webkit-scrollbar-thumb {
+            background: #00bfff; /* Thumb color */
+            border-radius: 10px;
+            border: 2px solid #007bff; /* Border color */
+        }
+
+        .container::-webkit-scrollbar-thumb:hover {
+            background: #007bff; /* Thumb color on hover */
+            border: 2px solid red; /* Border color on hover */
+        }
+
+        h2 {
+            color: #00bfff;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            text-align: left;
+        }
+
+        input[type="number"],
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 20px;
+            border: 2px solid #00bfff;
+            box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: #555;
+            color: #fff;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input[type="number"]:hover,
+        input[type="text"]:hover {
+            border-color: #007bff;
+            box-shadow: inset 0 6px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        button {
+            background-color: #00bfff;
+            color: #fff;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        button:hover {
+            background-color: #007bff;
+        }
+
+        .logo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 150px;
+            height: auto;
+            perspective: 1000px; /* Enable 3D space for flip effect */
+        }
+
+        .logo img {
+            width: 100%;
+            height: auto;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .logo:hover img {
+            transform: rotateY(360deg); /* Flip the image on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">
+        <img src="{{ url_for('static', filename='images/logo-no-background.png') }}" alt="Website Logo">
+    </div>
+    <div class="container">
+        <h2>University Exam Question Classification</h2>
+        <h1>Enter Questions</h1>
+        <form method="post" action="/classify">
+            <div class="form-group">
+                <label for="num_questions">Number of questions:</label>
+                <input type="number" id="num_questions" name="num_questions" min="1" max="1000" required>
+            </div>
+            <div id="questions" class="form-group"></div>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('num_questions').addEventListener('input', function() {
+            const numQuestions = this.value;
+            const questionsDiv = document.getElementById('questions');
+            questionsDiv.innerHTML = '';
+            for (let i = 0; i < numQuestions; i++) {
+                questionsDiv.innerHTML += `
+                    <div class="form-group">
+                        <label for="question${i+1}">Question ${i+1}:</label><br>
+                        <input type="text" id="question${i+1}" name="question${i+1}" required><br>
+                    </div>`;
+            }
+        });
+    </script>
+</body>
+</html>

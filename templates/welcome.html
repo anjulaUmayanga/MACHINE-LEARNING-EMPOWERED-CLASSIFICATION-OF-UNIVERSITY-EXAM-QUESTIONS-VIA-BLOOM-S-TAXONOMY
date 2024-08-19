@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Ensure no scroll bars appear */
+            background-color: #F0F0F0; /* Initial background color */
+            animation: colorTransition 10s forwards; /* Apply the color transition animation */
+        }
+        .container {
+            text-align: center;
+        }
+        .welcome-gif {
+            width: 80%;  /* Set the width to 80% of the container */
+            max-width: 600px;  /* Set a maximum width */
+            height: auto;
+            border-radius: 10px;
+            animation: resize 6s infinite; /* Apply the resize animation */
+        }
+        @keyframes resize {
+            0% {
+                transform: scale(1); /* Initial size */
+            }
+            50% {
+                transform: scale(1.2); /* Increase size */
+            }
+            100% {
+                transform: scale(1); /* Return to initial size */
+            }
+        }
+        @keyframes colorTransition {
+            from {
+                background-color: #F0F0F0; /* Start color */
+            }
+            to {
+                background-color: #333333; /* End color */
+            }
+        }
+        .bg {
+            background-image: url("Source/bg1.jpg");
+            height: 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+    </style>
+    <script>
+        // Redirect to index.html after 5 seconds
+        setTimeout(function() {
+            window.location.href = '/index';
+        }, 5000);
+    </script>
+</head>
+<body>
+    <div class="bg"></div>
+    <div class="container">
+        <img src="{{ url_for('static', filename='welcome.gif') }}" alt="Welcome" class="welcome-gif">
+    </div>
+</body>
+</html>
